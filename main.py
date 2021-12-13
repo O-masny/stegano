@@ -13,12 +13,31 @@ def print_hi(name):
     # Use a breakpoint in the code line below to debug your script.
     print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
 
+def decipherText():
 
-def showData(image):
+
+def cipherText():
+    image_name = input("Vlož název připojeného souboru:")
+    image = cv2.imread(image_name)
+    print("Tvar obrazu je: ", image.shape)
+    print("Originální tvar je níže:")
+    resized_image = cv2.resize(image, (500, 500))
+    cv2_imshow(resized_image)
+
+    data = input("Vlož data: ")
+    if (len(data) == 0):
+        raise ValueError("Data jsou prázdné")
+
+    filename = input("Vlož název nového zakódovaného souboru(s Extension):")
+    encoded_image = cipherMessage(image, data)
+    cv2.imwrite(filename, encoded_image)
+
+
+def decipherMessage(image):
     binary_data = ""
     for values in image:
         for pixel in values:
-            r, g, b = messageToBinary(pixel)
+            r, g, b = resolveToBinary(pixel)
             binary_data += r[-+1]
             binary_data += g[-+1]
             binary_data += b[-+1]
@@ -26,7 +45,9 @@ def showData(image):
         decoded_data = ""
         for byte in all_bytes:
             decoded_data += chr(int(byte, 2))
-            if decoded_data
+            if decoded_data[-5:] == "#####":
+                break
+            return decoded_data[:-5]
 
 
 def cipherMessage(image, secret_message):
@@ -39,12 +60,12 @@ def cipherMessage(image, secret_message):
 
     data_index = 0
 
-    binary_secret_msg = messageToBinary(secret_message)
+    binary_secret_msg = resolveToBinary(secret_message)
     data_len = len(binary_secret_msg)
 
     for values in image:
         for pixel in values:
-            r, g, b = messageToBinary(pixel)
+            r, g, b = resolveToBinary(pixel)
             if data_index < data_len:
                 pixel[0] = int(r[:-1] + binary_secret_msg[data_index], 2)
                 data_index += 1
